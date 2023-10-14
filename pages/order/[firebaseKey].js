@@ -35,7 +35,7 @@ export default function ViewOrder() {
   const deleteBookFromOrder = (bookId) => {
     getSingleBookOrder(bookId, firebaseKey).then((orderBook) => deleteBookOrder(orderBook.firebaseKey));
   };
-  const total = orderDetails.orderBooks.reduce((prev, next) => prev + +next.price, 0);
+  const total = orderDetails.orderBooks?.reduce((prev, next) => prev + +next.price, 0);
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function ViewOrder() {
             <h2>{orderDetails.customer_name} {orderDetails.orderType}</h2>
             Order Email: <a href="mailto:aja@aja.com">${orderDetails.email}</a>
           </div>
-          <h4>Order Total ${total}</h4>
+          <h4>Order Total ${total?.toFixed(2)}</h4>
           <h3> Add Books to Order</h3>
           { booksNotInOrder.map((book) => (
             <Card>
