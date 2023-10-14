@@ -101,7 +101,7 @@ function BookForm({ obj }) {
         <Form.Select
           name="author_id"
           onChange={handleChange}
-          value={obj.author_id}
+          value={formInput.author_id}
           required
         >
           <option value="">Select An Author</option>
@@ -124,7 +124,6 @@ function BookForm({ obj }) {
             label="On Sale?"
             name="sale"
             checked={formInput.sale}
-            required
             onChange={(e) => {
               setFormInput((prevState) => ({
                 ...prevState,
