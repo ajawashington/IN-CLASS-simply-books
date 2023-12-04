@@ -8,9 +8,11 @@ import {
 } from 'react-bootstrap';
 import { signOut } from '../utils/auth';
 import { useAuth } from '../utils/context/authContext';
+import { clientCredentials } from '../utils/client';
 
 export default function NavBar() {
-  const { dbUser } = useAuth();
+  const { dbUser, user } = useAuth();
+  const { adminUser } = clientCredentials;
 
   return (
     !dbUser
@@ -41,9 +43,11 @@ export default function NavBar() {
                 <Link passHref href="/authors">
                   <Nav.Link>Authors</Nav.Link>
                 </Link>
-                <Link passHref href="/orders">
-                  <Nav.Link>Orders</Nav.Link>
-                </Link>
+                {adminUser === user.uid ? (
+                  <Link passHref href="/orders">
+                    <Nav.Link>Orders</Nav.Link>
+                  </Link>
+                ) : ''}
                 <Link passHref href="/community">
                   <Nav.Link>Community</Nav.Link>
                 </Link>
@@ -58,7 +62,6 @@ export default function NavBar() {
           </Container>
         </Navbar>
       )
-
   );
 }
 

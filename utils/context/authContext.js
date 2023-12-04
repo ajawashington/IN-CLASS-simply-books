@@ -35,6 +35,7 @@ const AuthProvider = (props) => {
           }
         });
       } else {
+        setDbUser(null);
         setUser(false);
       }
     }); // creates a single global listener for auth state changed
