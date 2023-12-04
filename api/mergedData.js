@@ -2,8 +2,10 @@
 
 import { deleteSingleAuthor, getAuthorBooks, getSingleAuthor } from './authorData';
 import { deleteBook, getBooks, getSingleBook } from './bookData';
-import { getOrderBooks } from './orderBookData';
-import { getSingleOrder } from './orderData';
+import { getMessages } from './messageData';
+import { deleteBookOrder, getOrderBooks } from './orderBookData';
+import { deleteOrder, getSingleOrder } from './orderData';
+import { getSingleUser } from './userData';
 
 const getBookDetails = (firebaseKey) => new Promise((resolve, reject) => {
   getSingleBook(firebaseKey).then((bookObj) => {
@@ -30,45 +32,54 @@ const deleteAuthorBooksRelationship = (firebaseKey) => new Promise((resolve, rej
   }).catch(reject);
 });
 
-// TO RENDER MY ORDER WITH ALL ORDERBOOKS LISTED
-const getOrderDetails = async (orderId) => {
+const getOrderDetails = async (orderId, uid) => {
   // GET ORDER
   const order = await getSingleOrder(orderId);
 
-  // GET ALL ORDERBOOKS RELATED TO ORDER
-  const allOrderBooks = await getOrderBooks(orderId);
-
-  // GET THE BOOKS FOUND IN THE ORDER BOOKS, RETURNS AN ARRAY OF PROMISES
-  const getSingleBooks = await allOrderBooks.map((orderBook) => getSingleBook(orderBook.bookId));
-
-  // MOST USE PROMISE.ALL() TO RETURN EACH BOOK OBJECT
-  const orderBooks = await Promise.all(getSingleBooks);
-
-  // RETURNS THE SINGLE ORDER AND ALL BOOKS FOUND RELATED TO ORDER
-  return { ...order, orderBooks };
-};
-
-// GET BOOKS NOT RELATED TO AN ORDER
-const getBooksNotInTheOrder = async (uid, orderId) => {
-  // GET ALL THE BOOKS
+  // GET ALL BOOKS
   const allBooks = await getBooks(uid);
 
-  // GET ALL THE ORDERBOOKS RELATES TO THE ORDER
-  const orderBooks = await getOrderBooks(orderId);
+  // GET ALL ORDERBOOKS
+  const allOrderBooks = await getOrderBooks(orderId);
 
-  // GET THE BOOKS FOUND IN THE ORDER BOOKS, RETURNS AN ARRAY OF PROMISES
-  const bookPromises = await orderBooks.map((orderBook) => getSingleBook(orderBook.bookId));
+  // GET SINGLE BOOKS IN ORDER
+  const books = await allOrderBooks.map((orderBook) => getSingleBook(orderBook.bookId));
 
-  // MOST USE PROMISE.ALL() TO RETURN EACH BOOK OBJECT
-  const books = await Promise.all(bookPromises);
+  // MOST USE PROMISE.ALL() TO RETURN EACH BOOK IN ORDER
+  const booksInOrder = await Promise.all(books);
 
-  // FILTER AND COMPARE THE TWO ARRAYS OF ALL BOOKS AND ALL ORDERBOOKS
-  const filterBooks = await allBooks.filter((obj) => !books.some((e) => e.firebaseKey === obj.firebaseKey));
+  // FILTERED BOOKS NOT IN ORDER
+  const booksNotInOrder = await allBooks.filter((obj) => !booksInOrder.some((e) => e.firebaseKey === obj.firebaseKey));
 
-  // ONLY RETURN THE BOOKS NOT RELATED TO ORDER
-  return filterBooks;
+  // RETURNS THE SINGLE ORDER AND ALL BOOKS FOUND RELATED TO ORDER
+  return { ...order, booksInOrder, booksNotInOrder };
+};
+
+const deleteOrderBooksRelationship = (firebaseKey) => new Promise((resolve, reject) => {
+  getOrderBooks(firebaseKey).then((orderBooksArray) => {
+    const deleteBookPromises = orderBooksArray.map((ob) => deleteBookOrder(ob.firebaseKey));
+
+    Promise.all(deleteBookPromises).then(() => {
+      deleteOrder(firebaseKey).then(resolve);
+    });
+  }).catch(reject);
+});
+
+const getAllMessages = async (senderId, receiverId) => {
+  const receivedMessages = await getMessages(senderId, receiverId);
+  const sentMessages = await getMessages(receiverId, senderId);
+  const sender = await getSingleUser(senderId);
+  const receiver = await getSingleUser(receiverId);
+  const messages = await receivedMessages.concat(sentMessages);
+
+  return { sender, receiver, messages };
 };
 
 export {
-  getBookDetails, getAuthorDetails, deleteAuthorBooksRelationship, getOrderDetails, getBooksNotInTheOrder,
+  getBookDetails,
+  getAuthorDetails,
+  deleteAuthorBooksRelationship,
+  getOrderDetails,
+  deleteOrderBooksRelationship,
+  getAllMessages,
 };

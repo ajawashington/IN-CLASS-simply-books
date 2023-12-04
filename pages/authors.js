@@ -26,10 +26,9 @@ function Showauthors() {
   return (
     <div className="text-center my-4">
       <Link href="/author/new" passHref>
-        <Button>Add A author</Button>
+        <Button>Add A Author</Button>
       </Link>
       <div className="d-flex flex-wrap">
-        {/* TODO: map over authors here using authorCard component */}
         {authors.map((author) => (
           <AuthorCard key={author.firebaseKey} authorObj={author} onUpdate={getAllTheAuthors} />
         ))}

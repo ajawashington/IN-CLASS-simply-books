@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { firebase } from '../client';
+import { getSingleUser } from '../../api/userData';
 
 const AuthContext = createContext();
 
@@ -15,6 +16,7 @@ AuthContext.displayName = 'AuthContext'; // Context object accepts a displayName
 
 const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
 
   // there are 3 states for the user:
   // null = application initial state, not yet loaded
@@ -22,23 +24,32 @@ const AuthProvider = (props) => {
   // an object/value = user is logged in
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((fbUser) => {
+    firebase.auth().onAuthStateChanged(async (fbUser) => {
       if (fbUser) {
         setUser(fbUser);
+        await getSingleUser(fbUser.uid).then(async (response) => {
+          if (!response) {
+            setDbUser(null);
+          } else {
+            setDbUser(response);
+          }
+        });
       } else {
         setUser(false);
       }
     }); // creates a single global listener for auth state changed
-  }, []);
+  }, [dbUser]);
 
   const value = useMemo( // https://reactjs.org/docs/hooks-reference.html#usememo
     () => ({
+      dbUser,
       user,
+      setDbUser,
       userLoading: user === null,
       // as long as user === null, will be true
       // As soon as the user value !== null, value will be false
     }),
-    [user],
+    [user, dbUser],
   );
 
   return <AuthContext.Provider value={value} {...props} />;

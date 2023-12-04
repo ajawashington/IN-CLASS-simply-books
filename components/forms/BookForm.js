@@ -90,10 +90,10 @@ function BookForm({ obj }) {
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Price</Form.Label>
           <Form.Control
-            type="text"
+            type="numbwe"
             placeholder="Enter Book Price"
             name="price"
-            value={formInput.price}
+            value={parseInt(formInput.price, 10)}
             onChange={handleChange}
             required
           />

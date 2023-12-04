@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Link from 'next/link';
-import { deleteOrder } from '../api/orderData';
+import { deleteOrderBooksRelationship } from '../api/mergedData';
 
 function OrderCard({ orderObj, onUpdate }) {
   // FOR DELETE, WE NEED TO REMOVE THE order AND HAVE THE VIEW RERENDER,
   // SO WE PASS THE FUNCTION FROM THE PARENT THAT GETS THE orderS
   const deleteAnOrder = () => {
     if (window.confirm(`Do you want to delete order by ${orderObj.customer_name}?`)) {
-      deleteOrder(orderObj.firebaseKey).then(() => onUpdate());
+      deleteOrderBooksRelationship(orderObj.firebaseKey).then(() => onUpdate());
     }
   };
 
@@ -41,7 +41,7 @@ OrderCard.propTypes = {
     orderType: PropTypes.string,
     email: PropTypes.string,
     firebaseKey: PropTypes.string,
-    dateCreated: PropTypes.number,
+    dateCreated: PropTypes.string,
   }).isRequired,
   onUpdate: PropTypes.func.isRequired,
 };

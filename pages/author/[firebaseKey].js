@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { getAuthorDetails } from '../../api/mergedData';
@@ -5,11 +6,7 @@ import BookCard from '../../components/BookCard';
 
 export default function ViewAuthor() {
   const [authorDetails, setAuthorDetails] = useState({});
-
-  // TODO: Call Router Hook
   const router = useRouter();
-
-  // TODO: grab firebaseKey from url
   const { firebaseKey } = router.query;
 
   const getADetails = () => {
@@ -21,9 +18,23 @@ export default function ViewAuthor() {
   }, [firebaseKey]);
 
   return (
-    <div>{authorDetails.books?.map((book) => (
-      <BookCard key={book.firebaseKey} bookObj={book} onUpdate={getADetails} />
-    ))}
-    </div>
+    <>
+      <div>
+        <div className="d-flex flex-column">
+          <img src={authorDetails.image} alt={authorDetails.title} style={{ width: '300px' }} />
+        </div>
+        <div className="text-white ms-5 details">
+          <h5>
+            {authorDetails.title} by {authorDetails.first_name} {authorDetails.last_name}
+            {authorDetails?.favorite ? '🤍' : ''}
+          </h5>
+          Author Email: <a href={`mailto:${authorDetails.email}`}>{authorDetails?.email}</a>
+          <p>{authorDetails.description || ''}</p>
+        </div>
+        {authorDetails.books?.map((book) => (
+          <BookCard key={book.firebaseKey} bookObj={book} onUpdate={getADetails} />
+        ))}
+      </div>
+    </>
   );
 }

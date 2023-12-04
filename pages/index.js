@@ -6,30 +6,30 @@ import { useAuth } from '../utils/context/authContext';
 
 function Home() {
   // TODO: Get user ID using useAuth Hook
-  const { user } = useAuth();
+  const { dbUser } = useAuth();
 
   return (
     <div className="text-center my-4">
       <h1>
-        Hello {user.displayName}!!
+        Hello {dbUser.displayName}!!
       </h1>
-      {/* <div className="d-flex flex-wrap">
-        {books.slice(0, 4).map((book) => (
-          <BookCard key={book.firebaseKey} bookObj={book} />
-        ))}
-      </div> */}
       <Link href="/books" passHref>
         <Button>See All Books</Button>
       </Link>
       <br />
       <br />
-      {/* <div className="d-flex flex-wrap">
-        {authors.slice(0, 4).map((author) => (
-          <AuthorCard key={author.firebaseKey} authorObj={author} />
-        ))}
-      </div> */}
       <Link href="/authors" passHref>
         <Button>See All Authors</Button>
+      </Link>
+      <br />
+      <br />
+      <Link href="/orders" passHref>
+        <Button>See All Orders</Button>
+      </Link>
+      <br />
+      <br />
+      <Link href="/community" passHref>
+        <Button>See Community</Button>
       </Link>
     </div>
   );

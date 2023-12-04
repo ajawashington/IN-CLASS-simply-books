@@ -31,10 +31,10 @@ export default function OrderForm({ orderObj }) {
     if (orderObj.firebaseKey) {
       updateOrder(formInput).then(() => router.push(`/order/${orderObj.firebaseKey}`));
     } else {
-      const payload = { ...formInput, dateCreated: new Date() };
+      const payload = { ...formInput, dateCreated: new Date().toUTCString() };
       createOrder(payload).then(({ name }) => {
         const patchPayload = { firebaseKey: name };
-        updateOrder(patchPayload).then(() => router.push('/orders'));
+        updateOrder(patchPayload).then(() => router.push(`/order/${name}`));
       });
     }
   };
