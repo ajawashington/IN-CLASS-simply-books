@@ -38,12 +38,13 @@ const AuthProvider = (props) => {
         setUser(false);
       }
     }); // creates a single global listener for auth state changed
-  }, [dbUser]);
+  }, []);
 
   const value = useMemo( // https://reactjs.org/docs/hooks-reference.html#usememo
     () => ({
       dbUser,
       setDbUser,
+      setUser,
       user,
       userLoading: user === null,
       // as long as user === null, will be true

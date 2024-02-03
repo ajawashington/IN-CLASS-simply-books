@@ -14,17 +14,17 @@ const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) 
   const router = useRouter();
   const { adminUser } = clientCredentials;
 
-  useEffect(() => {
-    if (user?.uid !== adminUser && router.pathname.includes('/order')) {
-      router.push('/');
-    }
-  }, [user, router]);
+  // useEffect(() => {
+  //   if (user?.uid !== adminUser && router.pathname.includes('/order')) {
+  //     router.push('/');
+  //   }
+  // }, [user, router, dbUser]);
 
   // if user state is null, then show loader
   if (userLoading) {
     return <Loading />;
   }
-  if (dbUser === null) {
+  if (dbUser === null && user) {
     return (
       <>
         <NavBar user={user} />
