@@ -4,6 +4,8 @@ import { deleteSingleAuthor, getAuthorBooks, getSingleAuthor } from './authorDat
 import { deleteBook, getBooks, getSingleBook } from './bookData';
 import { getOrderBooks } from './orderBookData';
 import { getSingleOrder } from './orderData';
+import { getMessages } from './messageData';
+import { getSingleUser } from './userData';
 
 const getBookDetails = (firebaseKey) => new Promise((resolve, reject) => {
   getSingleBook(firebaseKey).then((bookObj) => {
@@ -69,6 +71,16 @@ const getBooksNotInTheOrder = async (uid, orderId) => {
   return filterBooks;
 };
 
+const getAllMessages = async (senderId, receiverId) => {
+  const receivedMessages = await getMessages(senderId, receiverId);
+  const sentMessages = await getMessages(receiverId, senderId);
+  const sender = await getSingleUser(senderId);
+  const receiver = await getSingleUser(receiverId);
+  const messages = await receivedMessages.concat(sentMessages);
+
+  return { sender, receiver, messages };
+};
+
 export {
-  getBookDetails, getAuthorDetails, deleteAuthorBooksRelationship, getOrderDetails, getBooksNotInTheOrder,
+  getBookDetails, getAuthorDetails, deleteAuthorBooksRelationship, getOrderDetails, getBooksNotInTheOrder, getAllMessages,
 };
